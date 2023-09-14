@@ -1,0 +1,32 @@
+{
+  "name": "wordpress-theme-json-css-autosuggest",
+  "displayName": "WordPress theme.json CSS Autosuggest",
+  "description": "For WordPress Theme Developers - Get CSS Custom Properties generated via theme.json as part of your CSS autosuggestions",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/theme.json"
+  ],
+  "main": "./extension.js",
+  "contributes": {},
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.82.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "eslint": "^8.47.0",
+    "glob": "^10.3.3",
+    "mocha": "^10.2.0",
+    "typescript": "^5.1.6",
+    "@vscode/test-electron": "^2.3.4"
+  }
+}
