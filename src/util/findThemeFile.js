@@ -9,13 +9,7 @@ const { multipleThemeFilePrompt } = require('./userPrompts');
  * @returns {Promise} A Promise that resolves to path to the theme.json file, or an empty string if no theme.json file is found.
  */
 async function getUserDefinedOrWorkspaceThemeFilePath() {
-    const themeJsonPath = vscode.workspace.getConfiguration('themeJsonAutocomplete').get('themeJsonPath');
-
-
-    // If the path is not set, return an empty string.
-    if (!themeJsonPath) {
-        return '';
-    }
+    const themeJsonPath = vscode.workspace.getConfiguration('themeJsonAutocomplete').get('themeJsonPath') || '';
 
     // Check to see if the path points to a file, or a directory.
     const isThemeFile = themeJsonPath.match(/theme\.json$/)?.length;
@@ -26,7 +20,12 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
 
     // If the path points to a directory, search for a theme.json file inside of it.
     const searchPattern = themeJsonPath ? `${themeJsonPath}/**/theme.json`: '**/theme.json';
-    const themeJsonFiles = await vscode.workspace.findFiles(searchPattern, '**/node_modules/**', 1);
+    //log
+    console.log('searchPattern', searchPattern);
+    const themeJsonFiles = await vscode.workspace.findFiles(searchPattern);
+    // log
+    console.log('themeJsonFiles', themeJsonFiles);
+    
     if (!themeJsonFiles.length) {
         return '';
     }
