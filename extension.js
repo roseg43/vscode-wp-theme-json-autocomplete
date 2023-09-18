@@ -7,6 +7,7 @@ const {
 	registerAutocompleteProviders,
 	findThemeFile,
 } = require('./src/util');
+const { providerInstance } = require('./src/util/registerAutocompleteProviders');
 
 /**
  * Called when the extension is activated (if the current workspace contains a theme.json file)
@@ -15,23 +16,29 @@ const {
 function activate(context) {
 	console.log('Activating theme.json autocomplete extension.');
 	
-	findThemeFile().then((themeJsonPath) => {
-		// If we haven't found a theme.json path by now, the active file is not in a theme directory.
+	// Add an on update callback to the ThemeJSONParser singleton that refreshes the autocomplete providers when updates are made.
+	// TODO: Move this into ThemeJSONParser. It's here currently because we need the extension context.
+	ThemeJSONParser.setOnUpdate(() => {
+		if (providerInstance) {
+			providerInstance.dispose();
+		}
+
+		context.subscriptions.push(
+			registerAutocompleteProviders(
+				ThemeJSONParser.toArray()
+			)	
+		);
+	});
+	
+	findThemeFile().then((themeJsonPath) => {		
 		if (!themeJsonPath) {
 			return;
 		}
-
-		const themeJson = require(themeJsonPath);
 		
-		// Parse the theme file and register autocomplete providers.
+		const themeJson = require(themeJsonPath);
+
 		try {
-			const themeParser = new ThemeJSONParser(themeJson);
-			
-			context.subscriptions.push(
-				registerAutocompleteProviders(
-					themeParser.toArray()
-				)
-			);
+			ThemeJSONParser.update(themeJson);
 		} catch (e) {
 			vscode.window.showErrorMessage('Error parsing theme.json file. Please check that it is valid JSON.');
 		}
@@ -43,5 +50,5 @@ function deactivate() {}
 
 module.exports = {
 	activate,
-	deactivate
+	deactivate,
 }

@@ -1,5 +1,5 @@
 const findThemeFile = require('./findThemeFile');
-const registerAutocompleteProviders = require('./registerAutocompleteProviders');
+const {registerAutocompleteProviders} = require('./registerAutocompleteProviders');
 const userPrompts = require('./userPrompts');
 
 module.exports = {

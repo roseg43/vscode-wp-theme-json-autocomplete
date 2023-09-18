@@ -1,3 +1,23 @@
+const { register } = require('module');
+const { registerAutocompleteProviders } = require('../util');
+
+let instance = null;
+
+/**
+ * Class: Parses the theme.json file and converts values to CSS Custom Properties.
+ * 
+ * @param {Object} options
+ * @param {Object} options.json The theme.json file contents.
+ * @param {function} options.onUpdate A callback function to be called when the theme.json file is updated.
+ * 
+ * @property {Object} theme The theme.json file contents.
+ * @property {Object} properties An object containing arrays of CSS Custom Property tokens.
+ * @property {Array} properties.color An array of CSS Custom Property tokens for color values.
+ * @property {Array} properties.custom An array of CSS Custom Property tokens for custom values.
+ * @property {Array} properties.spacing An array of CSS Custom Property tokens for spacing values.
+ * @property {Array} properties.fontFamily An array of CSS Custom Property tokens for font family values.
+ * @property {function} onUpdate A callback function to be called when the theme.json file is updated.
+ */
 class ThemeJSONParser {
     theme;
     properties = {
@@ -6,20 +26,30 @@ class ThemeJSONParser {
         spacing: [],
         fontFamily: [],
     };
+    onUpdate = Object.create(Function);
 
-    constructor(themeJson) {
-        this.theme = themeJson;
-        this.properties = {
-            ...this.properties,
-            custom: this.parseCustomProperties(),
-            color: this.parseColors(),
-            spacing: this.parseSpacing(),
-            fontFamily: this.parseFontFamilies(),
-        };
+
+    constructor({json = null, onUpdate = () => {}} = {}) {
+        if (instance) {
+            return instance;
+        }
+        
+        if (!json) {
+            return;
+        }
+        this.onUpdate = onUpdate;
+        this.update(json)
+
+        instance = this;
+    }
+
+    getInstance() {
+        return instance;
     }
 
     /**
      * Checks the object's properties and sees if the schema matches an property and not further nested objects.
+     * TODO: Move labels into their own class.
      * @param {*} obj 
      * 
      * @returns {Object|Boolean} Returns an object with a `label` and `value` property if the object matches a property schema. Returns `false` if not.
@@ -96,6 +126,7 @@ class ThemeJSONParser {
     /**
      * Loops through the `custom` property of theme.json and converts values to CSS Custom Properties
      * Format: `--wp--custom--{key1}--{key2}--{key3}: {value};`
+     * TODO: Make a more generic version of this function that can be used for all properties
      * 
      * @returns {Array} An array of CSS Custom Property tokens
      */
@@ -114,6 +145,7 @@ class ThemeJSONParser {
 
     /**
      * Parses the `color` property of theme.json and converts values to CSS Custom Properties.
+     * 
      * @returns {Array} An array of CSS Custom Property tokens
      */
     parseColors() {
@@ -184,6 +216,47 @@ class ThemeJSONParser {
         }
         return properties;
     }
-}
 
-module.exports = ThemeJSONParser;
+    /**
+     * Updates the theme property and parses the theme.json file. Registers autocomplete providers.
+     * 
+     * @param {*} themeJson The theme.json file contents.
+     */
+    update(themeJson = {}) {
+        if (!themeJson) {
+            return;
+        }
+
+        this.theme = themeJson;
+        this.properties = {
+            ...this.properties,
+            custom: this.parseCustomProperties(),
+            color: this.parseColors(),
+            spacing: this.parseSpacing(),
+            fontFamily: this.parseFontFamilies(),
+        };
+        
+        if (this.onUpdate && typeof this.onUpdate === 'function') {
+            this.onUpdate();
+        }
+    }
+
+    /**
+     * Sets this.onUpdate to the callback function passed in.
+     * 
+     * @param {function} callback The function to be called when the theme.json file is updated.
+     * @returns {void}
+     */
+        setOnUpdate(callback) {
+            // If not a function, return
+            if (typeof callback !== 'function') {
+                return;
+            }
+
+            this.onUpdate = callback;
+        }
+
+    }
+
+const singletonThemeParser = new ThemeJSONParser();
+module.exports = singletonThemeParser;

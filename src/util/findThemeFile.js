@@ -20,11 +20,7 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
 
     // If the path points to a directory, search for a theme.json file inside of it.
     const searchPattern = themeJsonPath ? `${themeJsonPath}/**/theme.json`: '**/theme.json';
-    //log
-    console.log('searchPattern', searchPattern);
     const themeJsonFiles = await vscode.workspace.findFiles(searchPattern);
-    // log
-    console.log('themeJsonFiles', themeJsonFiles);
     
     if (!themeJsonFiles.length) {
         return '';
@@ -34,10 +30,33 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
         return themeJsonFiles[0].path;
     }
 
-    // If multiple theme.json files are found, prompt the user to select one. Store the selected path in the extension settings, and return the selected option.
-    const themeSelection = await multipleThemeFilePrompt(themeJsonFiles);
+    // If multiple theme.json files are found, display an error with an action to select one via multipleThemeFilePrompt.
+    return handleMultipleFilesDetected(themeJsonFiles);
+}
 
-    return themeSelection;
+/**
+ * Handles cases where multiple theme files are detected. Displays an error, and prompts the user to either
+ * - Select a theme.json file from the workspace to use for the extension
+ * - Disable the extension for the current workspace
+ *
+ * @param {vscode.Uri[]} themeJsonFiles  An array of paths to theme.json files
+ * @returns {Promise} A Promise that resolves to the path to the selected theme.json file, or an empty string if no theme.json file is found.
+ */
+async function handleMultipleFilesDetected (themeJsonFiles) {
+    vscode.window.showErrorMessage(
+        'Multiple theme.json files found.',
+        'Let me choose which to use',
+        'Disable extension for this workspace'
+    ).then((action) => {
+        switch (action) {
+            case 'Let me choose which to use':
+                return multipleThemeFilePrompt(themeJsonFiles);
+
+            case 'Disable extension for this workspace':
+                vscode.workspace.getConfiguration('wordpressThemeJsonCssAutosuggest').update('enable', false);
+                return '';
+        }
+    });
 }
 
 /**

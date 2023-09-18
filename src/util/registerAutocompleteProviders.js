@@ -1,5 +1,7 @@
 const vscode = require('vscode');
 
+let providerInstance;
+
 /**
  * Creates the autocomplete provider for CSS files.
  * @param {Array} values Array of values to be added to autocomplete suggestions.
@@ -23,15 +25,19 @@ function registerAutocompleteProviders(values = []) {
 					);
 				}
 
-				return [ 
-					new vscode.CompletionItem('Hello World!'),
-				]
+				// If no values are passed, return an empty array.
+				return [];
 			}
 		},
 		'--'
 	);
 
-	return provider;
+	providerInstance = provider;
+	
+	return providerInstance;
 }
 
-module.exports = registerAutocompleteProviders
+module.exports = {
+	registerAutocompleteProviders,
+	providerInstance,
+};

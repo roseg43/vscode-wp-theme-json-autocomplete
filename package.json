@@ -21,7 +21,7 @@
         "wordpressThemeJsonCssAutosuggest.enable": {
           "type": "boolean",
           "default": true,
-          "description": "Enable/disable this extension."
+          "description": "Enable this extension."
         },
         "wordpressThemeJsonCssAutosuggest.themeJsonPath": {
           "type": "string",
