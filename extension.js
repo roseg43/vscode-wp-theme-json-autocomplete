@@ -3,6 +3,7 @@ const vscode = require('vscode');
 
 // Internal dependencies
 const ThemeJSONParser = require('./src/classes/ThemeJSONParser');
+const findThemeFile = require('./src/util/findThemeFile');
 
 /**
  * Called when the extension is activated (if the current workspace contains a theme.json file)
@@ -10,55 +11,27 @@ const ThemeJSONParser = require('./src/classes/ThemeJSONParser');
  */
 function activate(context) {
 	console.log('Activating theme.json autocomplete extension.');
-	/*
-	From the root of the current workspace/folder, search for a theme.json file.
-	If that file isn't found, check display a notification to the user: "theme.json file not found! Please set your workspace root to the root of your WordPress theme, or customize the path to search for in the extension settings."
-	If the file is found, parse it.
-	*/
-	const currentEditor = vscode.window.activeTextEditor;
-	if (!currentEditor) {
-		vscode.workspace.findFiles('**/theme.json', '**/node_modules/**', 1).then(
-			(files) => {
-				if (!files.length) {
-					vscode.window.showErrorMessage('theme.json file not found! Please set your workspace root to the root of your WordPress theme, or customize the path to search for in the extension settings.');
-				}
-			}
-		);
-	}
-
-	if (!currentEditor.document) {
-		return;
-	}
-
-	const currentFilename = currentEditor.document.fileName;
-
-	// Check if the current file path is somewhere inside of a theme directory
-	const isFileInTheme = currentFilename.match(/(.*\/wp-content\/themes\/[^\/]+\/)/)?.length;
-	let themeJsonPath = '';
-
-	if (isFileInTheme) {
-		// Get the path to the theme.json file
-		themeJsonPath = currentFilename.match(/(.*\/wp-content\/themes\/[^\/]+\/)/)[0] + 'theme.json';
-	}
-
-	// If we haven't found a theme.json path by now, the active file is not in a theme directory.
-	if (!themeJsonPath) {
-		return;
-	}
-
-	const themeJson = require(themeJsonPath);
 	
-	console.log('Attempting to parse theme.json file and register autocomplete providers.');
-	try {
-		const themeParser = new ThemeJSONParser(themeJson);
-		context.subscriptions.push(
-			registerAutocompleteProviders(
-				themeParser.toArray()
-			)
-		);
-	} catch (e) {
-		vscode.window.showErrorMessage('Error parsing theme.json file. Please check that it is valid JSON.');
-	}
+	findThemeFile().then((themeJsonPath) => {
+		// If we haven't found a theme.json path by now, the active file is not in a theme directory.
+		if (!themeJsonPath) {
+			return;
+		}
+
+		const themeJson = require(themeJsonPath);
+		
+		console.log('Attempting to parse theme.json file and register autocomplete providers.');
+		try {
+			const themeParser = new ThemeJSONParser(themeJson);
+			context.subscriptions.push(
+				registerAutocompleteProviders(
+					themeParser.toArray()
+				)
+			);
+		} catch (e) {
+			vscode.window.showErrorMessage('Error parsing theme.json file. Please check that it is valid JSON.');
+		}
+	});
 }
 
 /**

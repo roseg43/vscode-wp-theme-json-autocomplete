@@ -1,16 +1,9 @@
 # wordpress-theme-json-css-autosuggest README
 
-This is the README for your extension "wordpress-theme-json-css-autosuggest". After writing up a brief description, we recommend including the following sections.
+This extension for Visual Studio Code simplifies working with design tokens defined in the `theme.json` file used by WordPress themes. This extension solves the problem of having to constantly refer back to your `theme.json` file for design token names, or remember all of the prefixes WordPress uses for different settings when they get converted to CSS Custom Properties.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
 ## Requirements
 
