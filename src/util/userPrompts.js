@@ -1,6 +1,5 @@
 const vscode = require('vscode');
 
-
 /**
  * Prompts the user to select a theme.json file from the workspace to use for the extension
  * when multiples are found.
