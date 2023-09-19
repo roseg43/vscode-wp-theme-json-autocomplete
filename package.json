@@ -13,7 +13,24 @@
     "workspaceContains:**/theme.json"
   ],
   "main": "./extension.js",
-  "contributes": {},
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "WordPress theme.json CSS Autosuggest",
+      "properties": {
+        "wordpressThemeJsonCssAutosuggest.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable this extension."
+        },
+        "wordpressThemeJsonCssAutosuggest.themeJsonPath": {
+          "type": "string",
+          "default": "",
+          "description": "The path to the theme directory. Leave blank to use the workspace root."
+        }
+      }
+    }
+  },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
