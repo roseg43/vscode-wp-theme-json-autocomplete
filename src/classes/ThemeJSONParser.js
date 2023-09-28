@@ -4,7 +4,7 @@ const { registerAutocompleteProviders } = require('../util');
 let instance = null;
 
 /**
- * Class: Parses the theme.json file and converts values to CSS Custom Properties.
+ * Class: Singleton that parses the theme.json file and converts values to CSS Custom Properties.
  * 
  * @param {Object} options
  * @param {Object} options.json The theme.json file contents.
@@ -109,9 +109,9 @@ class ThemeJSONParser {
     toCssCustomPropertyString = (objOrArray, prefix = '', propertyCategory = 'preset') => {
         let parsedProperties = [];
         for (const key in objOrArray) {
-            // Store a modified version of the key, adding a single `-` character after any numbers.
+            // Store a modified version of the key, adding a single `-` character after any numbers. Also convert camelCase to kebab-case.
             // This is used when converting the object keys to CSS Custom Properties, as WordPress adds a single `-` character after any numbers.
-            let modifiedKey = key.replace(/(\d)/g, '$1-');
+            let modifiedKey = key.replace(/(\d)/g, '$1-').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
             if (typeof objOrArray[key] === 'object') {
                // Check if this object matches a property schema and get the label and value if so.
