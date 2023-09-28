@@ -110,9 +110,13 @@ class ThemeJSONParser {
     toCssCustomPropertyString = (objOrArray, prefix = '', propertyCategory = 'preset') => {
         let parsedProperties = [];
         for (const key in objOrArray) {
-            // Store a modified version of the key, adding a single `-` character after any numbers. Also convert camelCase to kebab-case.
-            // This is used when converting the object keys to CSS Custom Properties, as WordPress adds a single `-` character after any numbers.
-            let modifiedKey = key.replace(/(\d)/g, '$1-').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+            /*
+            Store a modified version of the key, adding a single `-` character after any numbers that come before or after a character.
+            Also convert camelCase to kebab-case.
+            This is used when converting the object keys to CSS Custom Properties,
+            as WordPress adds a single `-` character after any numbers that come before or after a character.
+            */
+            const modifiedKey = key.replace(/([0-9])([a-zA-Z])/g, '$1-$2').replace(/([a-zA-Z])([0-9])/g, '$1-$2').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
             if (typeof objOrArray[key] === 'object') {
                // Check if this object matches a property schema and get the label and value if so.
