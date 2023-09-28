@@ -11,6 +11,7 @@ let instance = null;
  * @param {function} options.onUpdate A callback function to be called when the theme.json file is updated.
  * 
  * @property {Object} theme The theme.json file contents.
+ * @property {String} themePath The path to the theme.json file.
  * @property {function} onUpdate A callback function to be called when the theme.json file is updated.
  * @property {Object} properties Contains Arrays of CSS Custom Property tokens.
  * @property {Array} properties.color CSS Custom Property tokens for color values.
@@ -23,6 +24,7 @@ let instance = null;
  */
 class ThemeJSONParser {
     theme;
+    themePath;
     properties = {
         color: [],
         custom: [],
@@ -33,7 +35,6 @@ class ThemeJSONParser {
         spacing: [],
     };
     onUpdate = Object.create(Function);
-
 
     constructor({json = null, onUpdate = () => {}} = {}) {
         if (instance) {
@@ -208,16 +209,17 @@ class ThemeJSONParser {
      * @param {function} callback The function to be called when the theme.json file is updated.
      * @returns {void}
      */
-        setOnUpdate(callback) {
-            // If not a function, return
-            if (typeof callback !== 'function') {
-                return;
-            }
-
-            this.onUpdate = callback;
+    setOnUpdate(callback) {
+        if (typeof callback !== 'function') {
+            return;
         }
-
+        this.onUpdate = callback;
     }
+
+    setThemePath(path) {
+        this.themePath = path;
+    }
+}
 
 const singletonThemeParser = new ThemeJSONParser();
 module.exports = singletonThemeParser;
