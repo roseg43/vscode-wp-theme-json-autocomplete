@@ -24,10 +24,10 @@ class ThemeJSONParser {
     properties = {
         color: [],
         custom: [],
-        spacing: [],
         fontFamily: [],
         fontSizes: [],
         layout: [],
+        spacing: [],
     };
     onUpdate = Object.create(Function);
 
@@ -175,10 +175,10 @@ class ThemeJSONParser {
             ...this.properties,
             custom: this.parseThemeProperty('custom', '', 'custom'),
             color: this.parseThemeProperty('color.palette', '--color'),
-            spacing: this.parseThemeProperty('spacing.spacingSizes', '--spacing'),
             fontFamily: this.parseThemeProperty('typography.fontFamilies', '--font-family'),
-            layout: this.parseThemeProperty('layout', '--global', 'style'),
             fontSizes: this.parseThemeProperty('typography.fontSizes', '--font-size'),
+            layout: this.parseThemeProperty('layout', '--global', 'style'),
+            spacing: this.parseThemeProperty('spacing.spacingSizes', '--spacing'),
         };
         
         if (this.onUpdate && typeof this.onUpdate === 'function') {
