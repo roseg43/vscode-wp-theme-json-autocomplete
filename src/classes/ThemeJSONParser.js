@@ -4,7 +4,7 @@ const { registerAutocompleteProviders } = require('../util');
 let instance = null;
 
 /**
- * Class: Parses the theme.json file and converts values to CSS Custom Properties.
+ * Class: Singleton that parses the theme.json file and converts values to CSS Custom Properties.
  * 
  * @param {Object} options
  * @param {Object} options.json The theme.json file contents.
