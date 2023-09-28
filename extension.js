@@ -49,9 +49,7 @@ function activate(context) {
 	 * Update our autocomplete provider when a theme.json file is saved.
 	 */
 	vscode.workspace.onDidSaveTextDocument((document) => {
-		
 		if (document.fileName.match(ThemeJSONParser.themePath)) {
-
 			try {
 				const themeJson = JSON.parse(document.getText());
 				ThemeJSONParser.update(themeJson);
@@ -62,7 +60,6 @@ function activate(context) {
 	});
 }
 
-// This method is called when your extension is deactivated
 function deactivate() {}
 
 module.exports = {
