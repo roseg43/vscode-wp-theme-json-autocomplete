@@ -11,11 +11,12 @@ let instance = null;
  * @param {function} options.onUpdate A callback function to be called when the theme.json file is updated.
  * 
  * @property {Object} theme The theme.json file contents.
- * @property {Object} properties An object containing arrays of CSS Custom Property tokens.
- * @property {Array} properties.color An array of CSS Custom Property tokens for color values.
- * @property {Array} properties.custom An array of CSS Custom Property tokens for custom values.
- * @property {Array} properties.spacing An array of CSS Custom Property tokens for spacing values.
- * @property {Array} properties.fontFamily An array of CSS Custom Property tokens for font family values.
+ * @property {Object} properties Contains Arrays of CSS Custom Property tokens.
+ * @property {Array} properties.color CSS Custom Property tokens for color values.
+ * @property {Array} properties.custom CSS Custom Property tokens for custom values.
+ * @property {Array} properties.spacing CSS Custom Property tokens for spacing values.
+ * @property {Array} properties.fontFamily CSS Custom Property tokens for font family values.
+ * @property {Array} properties.layout CSS Custom Property tokens for layout values.
  * @property {function} onUpdate A callback function to be called when the theme.json file is updated.
  */
 class ThemeJSONParser {
@@ -25,6 +26,7 @@ class ThemeJSONParser {
         custom: [],
         spacing: [],
         fontFamily: [],
+        layout: [],
     };
     onUpdate = Object.create(Function);
 
@@ -88,7 +90,7 @@ class ThemeJSONParser {
      * 
      * @returns {Array} An array of CSS Custom Property tokens
      */
-    toCssCustomPropertyString = (objOrArray, prefix = '', propertyCategory = 'custom') => {
+    toCssCustomPropertyString = (objOrArray, prefix = '', propertyCategory = 'preset') => {
         let parsedProperties = [];
         for (const key in objOrArray) {
             // Store a modified version of the key, adding a single `-` character after any numbers.
@@ -122,86 +124,26 @@ class ThemeJSONParser {
         }
         return parsedProperties;
     }
-    
+
     /**
-     * Loops through the `custom` property of theme.json and converts values to CSS Custom Properties
-     * Format: `--wp--custom--{key1}--{key2}--{key3}: {value};`
-     * TODO: Make a more generic version of this function that can be used for all properties
+     * Loops through a single iterable property of theme.json and converts values to CSS Custom Properties
+     * Format: `--wp--${propertyCategory}--{key1}--{key2}--{key3}: {value};`
+     * 
+     * @param {String} propertyName The name of the property to parse. Supports nested properties. Example: `color.palette`
+     * @param {String} prefix The prefix to add to the CSS Custom Property name. Used to recursively construct strings like `--font--size--small`
+     * @param {String} propertyCategory The category string WordPress uses to generate this property. Example values: `preset`, `custom`
      * 
      * @returns {Array} An array of CSS Custom Property tokens
      */
-    parseCustomProperties() {
-        const {
-            settings: {
-                custom: customProperties
-            }
-         } = this.theme;
-        if (!customProperties) {
+    parseThemeProperty(propertyName, prefix = '', propertyCategory = 'preset') {
+        // Get the property from the theme.json file. If propertyName contains a `.` character, use that to access nested properties.
+        const property = propertyName.includes('.') ? propertyName.split('.').reduce((a, b) => a[b], this.theme.settings) : this.theme.settings[propertyName];
+        
+        if (!property) {
             return;
         }
 
-        return this.toCssCustomPropertyString(customProperties);        
-    }
-
-    /**
-     * Parses the `color` property of theme.json and converts values to CSS Custom Properties.
-     * 
-     * @returns {Array} An array of CSS Custom Property tokens
-     */
-    parseColors() {
-        const {
-            settings: {
-                color: {
-                    palette: colorPalette
-                }
-            }
-        } = this.theme;
-
-        if (!colorPalette) {
-            return;
-        }
-
-        return this.toCssCustomPropertyString(colorPalette, '--color', 'preset');
-    }
-
-    /**
-     * Parses the `spacing.spacingSizes` property of theme.json and converts values to CSS Custom Properties.
-     * @returns {Array} An array of CSS Custom Property tokens
-     */
-    parseSpacing() {
-        const {
-            settings: {
-                spacing: {
-                    spacingSizes
-                }
-            }
-        } = this.theme;
-
-        if (!spacingSizes) {
-            return;
-        }
-
-        return this.toCssCustomPropertyString(spacingSizes, '--spacing', 'preset');
-    }
-
-    /**
-     * Parses the `typography.fontFamilies` property of theme.json and converts values to CSS Custom Properties.
-     * @returns {Array} An array of CSS Custom Property tokens
-     */
-    parseFontFamilies() {
-        const {
-            settings: {
-                typography: {
-                    fontFamilies
-                }
-            }
-        } = this.theme;
-
-        if (!fontFamilies) {
-            return;
-        }
-
-        return this.toCssCustomPropertyString(fontFamilies, '--font-family', 'preset');
+        return this.toCssCustomPropertyString(property, prefix, propertyCategory);
     }
 
     /**
@@ -230,10 +172,11 @@ class ThemeJSONParser {
         this.theme = themeJson;
         this.properties = {
             ...this.properties,
-            custom: this.parseCustomProperties(),
-            color: this.parseColors(),
-            spacing: this.parseSpacing(),
-            fontFamily: this.parseFontFamilies(),
+            custom: this.parseThemeProperty('custom', '', 'custom'),
+            color: this.parseThemeProperty('color.palette', '--color'),
+            spacing: this.parseThemeProperty('spacing.spacingSizes', '--spacing'),
+            fontFamily: this.parseThemeProperty('typography.fontFamilies', '--font-family'),
+            layout: this.parseThemeProperty('layout', '--global', 'style'),
         };
         
         if (this.onUpdate && typeof this.onUpdate === 'function') {
