@@ -36,7 +36,6 @@ class ThemeJSONParser {
     };
     onUpdate = Object.create(Function);
 
-
     constructor({json = null, onUpdate = () => {}} = {}) {
         if (instance) {
             return instance;
@@ -211,18 +210,15 @@ class ThemeJSONParser {
      * @returns {void}
      */
     setOnUpdate(callback) {
-        // If not a function, return
         if (typeof callback !== 'function') {
             return;
         }
-
         this.onUpdate = callback;
     }
 
     setThemePath(path) {
         this.themePath = path;
     }
-
 }
 
 const singletonThemeParser = new ThemeJSONParser();
