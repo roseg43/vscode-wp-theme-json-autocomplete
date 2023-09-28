@@ -26,6 +26,7 @@ class ThemeJSONParser {
         custom: [],
         spacing: [],
         fontFamily: [],
+        fontSizes: [],
         layout: [],
     };
     onUpdate = Object.create(Function);
@@ -177,6 +178,7 @@ class ThemeJSONParser {
             spacing: this.parseThemeProperty('spacing.spacingSizes', '--spacing'),
             fontFamily: this.parseThemeProperty('typography.fontFamilies', '--font-family'),
             layout: this.parseThemeProperty('layout', '--global', 'style'),
+            fontSizes: this.parseThemeProperty('typography.fontSizes', '--font-size'),
         };
         
         if (this.onUpdate && typeof this.onUpdate === 'function') {
