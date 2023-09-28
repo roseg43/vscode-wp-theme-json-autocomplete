@@ -11,11 +11,12 @@ let instance = null;
  * @param {function} options.onUpdate A callback function to be called when the theme.json file is updated.
  * 
  * @property {Object} theme The theme.json file contents.
- * @property {Object} properties An object containing arrays of CSS Custom Property tokens.
- * @property {Array} properties.color An array of CSS Custom Property tokens for color values.
- * @property {Array} properties.custom An array of CSS Custom Property tokens for custom values.
- * @property {Array} properties.spacing An array of CSS Custom Property tokens for spacing values.
- * @property {Array} properties.fontFamily An array of CSS Custom Property tokens for font family values.
+ * @property {Object} properties Contains Arrays of CSS Custom Property tokens.
+ * @property {Array} properties.color CSS Custom Property tokens for color values.
+ * @property {Array} properties.custom CSS Custom Property tokens for custom values.
+ * @property {Array} properties.spacing CSS Custom Property tokens for spacing values.
+ * @property {Array} properties.fontFamily CSS Custom Property tokens for font family values.
+ * @property {Array} properties.layout CSS Custom Property tokens for layout values.
  * @property {function} onUpdate A callback function to be called when the theme.json file is updated.
  */
 class ThemeJSONParser {
@@ -25,6 +26,7 @@ class ThemeJSONParser {
         custom: [],
         spacing: [],
         fontFamily: [],
+        layout: [],
     };
     onUpdate = Object.create(Function);
 
@@ -173,7 +175,8 @@ class ThemeJSONParser {
             custom: this.parseThemeProperty('custom', '', 'custom'),
             color: this.parseThemeProperty('color.palette', '--color'),
             spacing: this.parseThemeProperty('spacing.spacingSizes', '--spacing'),
-            fontFamily: this.parseThemeProperty('typography.fontFamilies', '--font-family')
+            fontFamily: this.parseThemeProperty('typography.fontFamilies', '--font-family'),
+            layout: this.parseThemeProperty('layout', '--global', 'style'),
         };
         
         if (this.onUpdate && typeof this.onUpdate === 'function') {
