@@ -17,6 +17,7 @@ let instance = null;
  * @property {Array} properties.custom CSS Custom Property tokens for custom values.
  * @property {Array} properties.fontFamily CSS Custom Property tokens for font family values.
  * @property {Array} properties.fontSizes CSS Custom Property tokens for font size values.
+ * @property {Array} properties.gradient CSS Custom Property tokens for gradient values.
  * @property {Array} properties.layout CSS Custom Property tokens for layout values.
  * @property {Array} properties.spacing CSS Custom Property tokens for spacing values.
  */
@@ -27,9 +28,9 @@ class ThemeJSONParser {
         custom: [],
         fontFamily: [],
         fontSizes: [],
+        gradient: [],
         layout: [],
         spacing: [],
-        gradient: [],
     };
     onUpdate = Object.create(Function);
 
@@ -60,27 +61,39 @@ class ThemeJSONParser {
      * @returns {Object|Boolean} Returns an object with a `label` and `value` property if the object matches a property schema. Returns `false` if not.
      */
     #maybeGetObjectLabelAndValues(obj) {
+        // settings.spacing.spacingSizes, settings.typography.fontSizes
         if (obj.name && obj.size) {
-            // settings.spacing.spacingSizes, settings.typography.fontSizes
             return {
                 label: obj.slug,
                 value: obj.size,
             };
-        } else if (obj.slug && obj.color) {
-            //settings.color.pallete
+        }
+        
+        //settings.color.palette
+        if (obj.slug && obj.color) {
             return {
                 label: obj.slug,
                 value: obj.color,
             };
-        } else if (obj.fontFamily) {
-            // settings.typography.fontFamilies
+        }
+        
+        // settings.typography.fontFamilies
+        if (obj.fontFamily) {
             return {
                 label: obj.slug,
                 value: obj.fontFamily,
             };
-        } else {
-            return false;
         }
+
+        // settings.color.gradients
+        if (obj.gradient) {
+            return {
+                label: obj.slug,
+                value: obj.gradient,
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -179,6 +192,7 @@ class ThemeJSONParser {
             color: this.parseThemeProperty('color.palette', '--color'),
             fontFamily: this.parseThemeProperty('typography.fontFamilies', '--font-family'),
             fontSizes: this.parseThemeProperty('typography.fontSizes', '--font-size'),
+            gradient: this.parseThemeProperty('color.gradients', '--gradient'),
             layout: this.parseThemeProperty('layout', '--global', 'style'),
             spacing: this.parseThemeProperty('spacing.spacingSizes', '--spacing'),
         };
