@@ -7,7 +7,8 @@ const {
 	registerAutocompleteProviders,
 	findThemeFile,
 } = require('./src/util');
-const { providerInstance } = require('./src/util/registerAutocompleteProviders');
+
+let providerInstance = null;
 
 /**
  * Called when the extension is activated (if the current workspace contains a theme.json file)
@@ -23,24 +24,40 @@ function activate(context) {
 			providerInstance.dispose();
 		}
 
-		context.subscriptions.push(
-			registerAutocompleteProviders(
-				ThemeJSONParser.toArray()
-			)	
+		providerInstance = registerAutocompleteProviders(
+			ThemeJSONParser.toArray()
 		);
+
+		context.subscriptions.push(providerInstance);
 	});
 	
-	findThemeFile().then((themeJsonPath) => {		
-		if (!themeJsonPath) {
+	findThemeFile().then((path) => {	
+		if (!path) {
 			return;
 		}
 		
-		const themeJson = require(themeJsonPath);
-
+		ThemeJSONParser.setThemePath(path);	
 		try {
+			const themeJson = require(path);
 			ThemeJSONParser.update(themeJson);
 		} catch (e) {
 			vscode.window.showErrorMessage('Error parsing theme.json file. Please check that it is valid JSON.');
+		}
+	});
+
+	/**
+	 * Update our autocomplete provider when a theme.json file is saved.
+	 */
+	vscode.workspace.onDidSaveTextDocument((document) => {
+		
+		if (document.fileName.match(ThemeJSONParser.themePath)) {
+
+			try {
+				const themeJson = JSON.parse(document.getText());
+				ThemeJSONParser.update(themeJson);
+			} catch (e) {
+				vscode.window.showErrorMessage('Error parsing theme.json file. Please check that it is valid JSON.');
+			}
 		}
 	});
 }
