@@ -1,5 +1,5 @@
 # (VS Code) WordPress theme.json CSS Autosuggest
-![wp-theme-json-vsc-example-1](https://github.com/roseg43/vscode-wp-theme-json-autocomplete/assets/7225212/90d1e983-5683-4d29-a1eb-3d93df47ff7a)
+![wp-theme-json-vsc-example-1](https://github.com/roseg43/vscode-wp-theme-json-autocomplete/assets/7225212/ae739c34-fc5b-4d91-9000-bf35e007e0a3)
 
 This extension for Visual Studio Code simplifies working with design tokens defined in the `theme.json` file used by WordPress themes. It solves the problem of having to constantly refer back to your `theme.json` file for design token names, as well as having to remember all of the prefixes WordPress uses for different settings when they get converted to CSS Custom Properties.
 
