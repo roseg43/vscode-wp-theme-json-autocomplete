@@ -12,7 +12,7 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
     const themeJsonPath = vscode.workspace.getConfiguration('themeJsonAutocomplete').get('themeJsonPath') || '';
 
     // Check to see if the path points to a file, or a directory.
-    const isThemeFile = themeJsonPath.match(/theme\.json$/)?.length;
+    const isThemeFile = themeJsonPath.match(/theme\.json$/).length;
 
     if (isThemeFile) {
         return themeJsonPath;

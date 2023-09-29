@@ -24,9 +24,7 @@ async function multipleThemeFilePrompt(uris) {
     const themeJson = require(selectionToken.label);
     const ThemeJSONParser = require('../classes/ThemeJSONParser');
 
-    if (ThemeJSONParser?.update) {
-       ThemeJSONParser.update(themeJson);
-    }
+    ThemeJSONParser.update(themeJson);
 
     return selectionToken.label;
 }

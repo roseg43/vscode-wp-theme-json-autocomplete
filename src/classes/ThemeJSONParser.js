@@ -23,8 +23,8 @@ let instance = null;
  * @property {Array} properties.spacing CSS Custom Property tokens for spacing values.
  */
 class ThemeJSONParser {
-    theme;
-    themePath;
+    theme = {};
+    themePath = '';
     properties = {
         color: [],
         custom: [],
@@ -158,7 +158,14 @@ class ThemeJSONParser {
      */
     parseThemeProperty(propertyName, prefix = '', propertyCategory = 'preset') {
         // Get the property from the theme.json file. If propertyName contains a `.` character, use that to access nested properties.
-        const property = propertyName.includes('.') ? propertyName.split('.').reduce((a, b) => a[b], this.theme.settings) : this.theme.settings[propertyName];
+        const property = propertyName.includes('.') ? propertyName.split('.').reduce((a, b) => {
+            if (a && a[b]) {
+                return a[b];
+            }
+            
+            // If the nested property doesn't exist, return false.
+            return false;
+        }, this.theme.settings) : this.theme.settings[propertyName];
         
         if (!property) {
             return;
