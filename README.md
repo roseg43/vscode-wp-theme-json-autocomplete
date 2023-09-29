@@ -8,8 +8,12 @@ This extension for Visual Studio Code simplifies working with design tokens defi
 - Updates suggestions whenever `theme.json` is saved.
 - Provides property value details in suggestions so that you can see what values are set in `theme.json` at a glance
 
+## Installation
+The extension can be installed in two ways: manually via the `.vsix` file included in all releases, and through the [Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=GabrielRose.wordpress-theme-json-css-autosuggest)
+
 ## Requirements
 This extension will only work inside of a folder or file workspace.
+
 ## Extension Settings
 This extension contributes the following settings:
 
