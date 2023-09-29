@@ -3,6 +3,10 @@
   "displayName": "WordPress theme.json CSS Autosuggest",
   "description": "For WordPress Theme Developers - Get CSS Custom Properties generated via theme.json as part of your CSS autosuggestions",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:roseg43/vscode-wp-theme-json-autocomplete.git"
+  },
   "engines": {
     "vscode": "^1.82.0"
   },
