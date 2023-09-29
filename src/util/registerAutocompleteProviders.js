@@ -13,10 +13,10 @@ function registerAutocompleteProviders(values = []) {
 			pattern: '**/*.{css,sass,scss,less}',
 		},
 		{
-			provideCompletionItems(document, position) {
+			provideCompletionItems() {
 				if (values.length) {
 					return values.map(
-						(value, index) => new vscode.CompletionItem({
+						(value) => new vscode.CompletionItem({
 							label: value.name,
 							description: `${value.value}`,
 						}, vscode.CompletionItemKind.Variable)
