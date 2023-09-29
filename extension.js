@@ -14,9 +14,7 @@ let providerInstance = null;
  * Called when the extension is activated (if the current workspace contains a theme.json file)
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
-	console.log('Activating theme.json autocomplete extension.');
-	
+function activate(context) {	
 	// Add an on update callback to the ThemeJSONParser singleton that refreshes the autocomplete providers when updates are made.
 	// TODO: Move this into ThemeJSONParser. It's here currently because we need the extension context.
 	ThemeJSONParser.setOnUpdate(() => {
@@ -35,7 +33,6 @@ function activate(context) {
 		if (!path) {
 			return;
 		}
-		
 		ThemeJSONParser.setThemePath(path);	
 		try {
 			const themeJson = require(path);
@@ -49,7 +46,7 @@ function activate(context) {
 	 * Update our autocomplete provider when a theme.json file is saved.
 	 */
 	vscode.workspace.onDidSaveTextDocument((document) => {
-		if (document.fileName.match(ThemeJSONParser.themePath)) {
+		if (document.fileName === ThemeJSONParser.themePath) {
 			try {
 				const themeJson = JSON.parse(document.getText());
 				ThemeJSONParser.update(themeJson);

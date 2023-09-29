@@ -12,7 +12,7 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
     const themeJsonPath = vscode.workspace.getConfiguration('themeJsonAutocomplete').get('themeJsonPath') || '';
 
     // Check to see if the path points to a file, or a directory.
-    const isThemeFile = themeJsonPath.match(/theme\.json$/).length;
+    const isThemeFile = themeJsonPath.match(/theme\.json$/)?.length;
 
     if (isThemeFile) {
         return themeJsonPath;
@@ -31,7 +31,7 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
     }
 
     // If multiple theme.json files are found, display an error with an action to select one via multipleThemeFilePrompt.
-    return handleMultipleFilesDetected(themeJsonFiles);
+    return await handleMultipleFilesDetected(themeJsonFiles);
 }
 
 /**
@@ -43,20 +43,19 @@ async function getUserDefinedOrWorkspaceThemeFilePath() {
  * @returns {Promise} A Promise that resolves to the path to the selected theme.json file, or an empty string if no theme.json file is found.
  */
 async function handleMultipleFilesDetected (themeJsonFiles) {
-    vscode.window.showErrorMessage(
+    const action = await vscode.window.showErrorMessage(
         'Multiple theme.json files found.',
         'Let me choose which to use',
         'Disable extension for this workspace'
-    ).then((action) => {
-        switch (action) {
-            case 'Let me choose which to use':
-                return multipleThemeFilePrompt(themeJsonFiles);
+    );
+    switch (action) {
+        case 'Let me choose which to use':
+            return await multipleThemeFilePrompt(themeJsonFiles);
 
-            case 'Disable extension for this workspace':
-                vscode.workspace.getConfiguration('wordpressThemeJsonCssAutosuggest').update('enable', false);
-                return '';
-        }
-    });
+        case 'Disable extension for this workspace':
+            vscode.workspace.getConfiguration('wordpressThemeJsonCssAutosuggest').update('enable', false);
+            return '';
+    }
 }
 
 /**
@@ -67,7 +66,6 @@ async function handleMultipleFilesDetected (themeJsonFiles) {
  */
 async function findThemeFile() {
     let themeJsonPath = await getUserDefinedOrWorkspaceThemeFilePath();
-
     if (themeJsonPath) {
         return themeJsonPath;
     }

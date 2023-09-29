@@ -180,7 +180,7 @@ class ThemeJSONParser {
     toArray() {
         const properties = [];
         for (const key in this.properties) {
-            if (this.properties[key] && this.properties[key].length) {
+            if (this.properties[key] && this.properties[key]?.length) {
                 properties.push(...this.properties[key]);
             }
         }
