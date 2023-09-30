@@ -34,7 +34,8 @@ jobs:
         apt-get install -y apt-transport-https
         apt-get update
         apt-get install -y code
-    - uses: actions/checkout@v3
+        CODE_PATH=$(which code) >> $GITHUB_ENV
+        which code
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
