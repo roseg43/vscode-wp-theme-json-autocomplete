@@ -13,8 +13,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:trusty
 
     strategy:
       matrix:
