@@ -25,13 +25,24 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install vscode
       run: |
-        /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        echo ">>> Started xvfb"
+        apt-get update
+        apt-get clean
+        apt-get install -y wget gpg
+        wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+        install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+        sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+        apt-get install -y apt-transport-https
+        apt-get update
+        apt-get install -y code
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Start Xvfb
+      run: |
+        Xvfb :99 -screen 0 1024x768x24 &
+        export DISPLAY=:99
     - run: |
         npm ci
         npm run build --if-present
