@@ -17,11 +17,14 @@
 			"name": "Extension Tests",
 			"type": "extensionHost",
 			"request": "launch",
+			"runtimeExecutable": "${execPath}",
 			"args": [
 				 "--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/test/suite/index"
-			]
+			],
+			"outFiles": ["${workspaceFolder}/test/**/*.js"]
+			
 		}
 	]
 }
