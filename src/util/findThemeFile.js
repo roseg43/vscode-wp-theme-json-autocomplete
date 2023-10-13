@@ -9,7 +9,7 @@ const { multipleThemeFilePrompt } = require('./userPrompts');
  * @returns {Promise} A Promise that resolves to path to the theme.json file, or an empty string if no theme.json file is found.
  */
 async function getUserDefinedOrWorkspaceThemeFilePath() {
-    const themeJsonPath = vscode.workspace.getConfiguration('themeJsonAutocomplete').get('themeJsonPath') || '';
+    const themeJsonPath = vscode.workspace.getConfiguration('wordpressThemeJsonCssAutosuggest').get('themeJsonPath') || '';
 
     // Check to see if the path points to a file, or a directory.
     const isThemeFile = themeJsonPath.match(/theme\.json$/)?.length;
