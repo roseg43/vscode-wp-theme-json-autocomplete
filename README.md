@@ -24,8 +24,3 @@ This extension contributes the following settings:
 
 - Currently, the only way to change which `theme.json` file to use in a multi-theme workspace is to clear out `wordpressThemeJsonCssAutosuggest.themeJsonPath` manually.
 
-## Release Notes
-
-### 0.1.0
-Initial release
-
