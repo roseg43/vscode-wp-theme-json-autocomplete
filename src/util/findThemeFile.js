@@ -10,14 +10,21 @@ const { multipleThemeFilePrompt } = require('./userPrompts');
  */
 async function getUserDefinedOrWorkspaceThemeFilePath() {
     const themeJsonPath = vscode.workspace.getConfiguration('wordpressThemeJsonCssAutosuggest').get('themeJsonPath') || '';
-
-    // Check to see if the path points to a file, or a directory.
+    // Check to see if the path points to a file, or a directory. If it points to a file, confirm it exists.
     const isThemeFile = themeJsonPath.match(/theme\.json$/)?.length;
 
     if (isThemeFile) {
-        return themeJsonPath;
+        try {
+            const file = await vscode.workspace.fs.stat(vscode.Uri.file(themeJsonPath))
+            if (file.type === vscode.FileType.File || file.type === vscode.FileType.SymbolicLink ) {
+                return themeJsonPath;
+            }
+        } catch (error) {
+            console.error(error);
+            // TODO: Display error to user: File path set in extension settings does not exist.
+        }
     }
-
+    
     // If the path points to a directory, search for a theme.json file inside of it.
     const searchPattern = themeJsonPath ? `${themeJsonPath}/**/theme.json`: '**/theme.json';
     const themeJsonFiles = await vscode.workspace.findFiles(searchPattern);

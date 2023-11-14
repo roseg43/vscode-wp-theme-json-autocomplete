@@ -1,3 +1,6 @@
 node_modules
 .vscode-test/
 *.vsix
+
+# Ignore test workspace vscode config
+test/fixtures/testWorkspace/.vscode

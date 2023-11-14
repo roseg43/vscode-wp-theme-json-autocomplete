@@ -1,23 +1,21 @@
 const assert = require('assert');
 const findThemeFile = require('../../src/util/findThemeFile');
-const sinon = require('sinon');
 const vscode = require('vscode');
+const path = require('path');
+
+const workspaceFolder = path.resolve(__dirname, '../fixtures/testWorkspace/theme.json');
 
 suite('theme.json file locator', () => {
-    test('Uses the user-defined path if one is set in extension settings', async () => {
-        
-        // Stub vscode.workspace.getConfiguration method to return the user-defined path.
-        const workspaceGetStub = sinon.stub();
-        workspaceGetStub.withArgs('themeJsonPath').returns('/path/to/theme.json');
-
-        const workspaceStub = sinon.stub(vscode.workspace, 'getConfiguration');
-        workspaceStub.withArgs('wordpressThemeJsonCssAutosuggest').returns({
-            ...vscode.workspace.getConfiguration.prototype,
-            get: workspaceGetStub,
+    suite('Path checking', () => {
+        setup((done) => {
+            vscode.workspace.getConfiguration('wordpressThemeJsonCssAutosuggest').update('themeJsonPath', workspaceFolder).then(() => {
+                done();
+            });
         });
-
-        const result = await findThemeFile();
-
-        assert.strictEqual(result, '/path/to/theme.json');
-  }); 
+        
+        test('Uses the user-defined path if one is set in extension settings', async () => {
+            const result = await findThemeFile();
+            assert.strictEqual(result, workspaceFolder);
+        });
+    })
 });
