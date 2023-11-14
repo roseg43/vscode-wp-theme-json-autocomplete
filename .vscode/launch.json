@@ -5,6 +5,8 @@
 {
 	"version": "0.2.0",
 	"configurations": [
+		
+		
 		{
 			"name": "Run Extension",
 			"type": "extensionHost",
@@ -19,9 +21,11 @@
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
+				"${workspaceFolder}/test/fixtures/testWorkspace",
 				 "--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/test/suite/index"
+				"--extensionTestsPath=${workspaceFolder}/test/suite/index",
+				"${workspaceFolder}"
 			],
 			"outFiles": ["${workspaceFolder}/test/**/*.js"]
 			
